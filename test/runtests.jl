@@ -24,9 +24,6 @@ end
 # ╔═╡ 6a921012-2382-11eb-1e80-7fa5613b33fe
 import Pkg
 
-# ╔═╡ 33d1eab0-2390-11eb-0679-23964ae46a08
-hasproperty(Pkg.Types, :registries)
-
 # ╔═╡ fe905760-238f-11eb-1cc0-ebb3852a20de
 registry_paths = @static if isdefined(Pkg.Types, :registries)
 	Pkg.Types.registries()
@@ -88,7 +85,6 @@ end) |> keys |> collect |> sort!
 # ╠═98cd6600-2391-11eb-27ce-db2d65320b83
 # ╠═52305f60-2380-11eb-0a3b-6f693199061f
 # ╠═6a921012-2382-11eb-1e80-7fa5613b33fe
-# ╠═33d1eab0-2390-11eb-0679-23964ae46a08
 # ╠═fe905760-238f-11eb-1cc0-ebb3852a20de
 # ╠═1cea1de0-2390-11eb-1b76-21cd0039d5a3
 # ╠═4f502502-238f-11eb-010e-2bd4f4ad54ac
