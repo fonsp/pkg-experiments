@@ -44,7 +44,7 @@ end
 ctx = Pkg.Types.Context()
 
 # ╔═╡ 7b5add20-238f-11eb-1217-453e2d37d344
-function packagecompletions(partial_name)
+function registered_packagecompletions(partial_name)
 	@static if hasmethod(Pkg.REPLMode.complete_remote_package, (String,))
 		Pkg.REPLMode.complete_remote_package(partial_name)
 	else
@@ -53,7 +53,7 @@ function packagecompletions(partial_name)
 end
 
 # ╔═╡ 648b5340-238f-11eb-0b68-efb3de51a08c
-suggestions = isempty(input) ? [] : packagecompletions(input)
+suggestions = isempty(input) ? [] : registered_packagecompletions(input)
 
 # ╔═╡ 66d54340-238f-11eb-3648-276b79333215
 choice = first(suggestions)
@@ -86,7 +86,24 @@ stdlibs = readdir(Pkg.Types.stdlib_dir())
 @test "Dates" ∈ stdlibs
 
 # ╔═╡ 9ba253c0-2398-11eb-367b-b93d59a4fa4d
+function packagecompletions(partial_name)
+	[
+		filter(s -> startswith(s,partial_name), stdlibs);
+		registered_packagecompletions(partial_name)
+	]
+end
 
+# ╔═╡ e983eb30-2398-11eb-26e3-2f5381ee19a1
+input2 = "Dat"
+
+# ╔═╡ f16a2a80-2398-11eb-3b3c-790a6adb891c
+suggestions2 = packagecompletions(input2)
+
+# ╔═╡ f6a87b50-2398-11eb-23a4-11a2d74cf49a
+@test suggestions2[1] == "Dates"
+
+# ╔═╡ 02a99a10-2399-11eb-2040-131ed61481ae
+@test length(suggestions2) > 20
 
 # ╔═╡ Cell order:
 # ╠═d0b0df40-238f-11eb-34b4-0f3ed25ed387
@@ -108,3 +125,7 @@ stdlibs = readdir(Pkg.Types.stdlib_dir())
 # ╠═45229422-2397-11eb-3086-5b7ffc864025
 # ╠═9725f362-2398-11eb-2c68-994a991385ff
 # ╠═9ba253c0-2398-11eb-367b-b93d59a4fa4d
+# ╠═e983eb30-2398-11eb-26e3-2f5381ee19a1
+# ╠═f16a2a80-2398-11eb-3b3c-790a6adb891c
+# ╠═f6a87b50-2398-11eb-23a4-11a2d74cf49a
+# ╠═02a99a10-2399-11eb-2040-131ed61481ae
