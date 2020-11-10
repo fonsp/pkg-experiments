@@ -8,7 +8,7 @@ using InteractiveUtils
 using Test
 
 # ╔═╡ d0b0df40-238f-11eb-34b4-0f3ed25ed387
-input = "DiffEq"
+input = "Stati"
 
 # ╔═╡ 98cd6600-2391-11eb-27ce-db2d65320b83
 function registries_path(registries, package_name)
@@ -74,6 +74,20 @@ end) |> keys |> collect |> sort!
 # ╔═╡ d5d5b4a0-238f-11eb-3abf-2d2e30b9db08
 @test length(suggestions) > 10
 
+# ╔═╡ 8db62de0-2398-11eb-1010-354285451686
+md"""
+# Standard Libraries
+"""
+
+# ╔═╡ 45229422-2397-11eb-3086-5b7ffc864025
+stdlibs = readdir(Pkg.Types.stdlib_dir())
+
+# ╔═╡ 9725f362-2398-11eb-2c68-994a991385ff
+@test "Dates" ∈ stdlibs
+
+# ╔═╡ 9ba253c0-2398-11eb-367b-b93d59a4fa4d
+
+
 # ╔═╡ Cell order:
 # ╠═d0b0df40-238f-11eb-34b4-0f3ed25ed387
 # ╠═648b5340-238f-11eb-0b68-efb3de51a08c
@@ -90,3 +104,7 @@ end) |> keys |> collect |> sort!
 # ╠═4f502502-238f-11eb-010e-2bd4f4ad54ac
 # ╠═57e25bc0-238f-11eb-3ca4-9900e4c37722
 # ╠═7b5add20-238f-11eb-1217-453e2d37d344
+# ╟─8db62de0-2398-11eb-1010-354285451686
+# ╠═45229422-2397-11eb-3086-5b7ffc864025
+# ╠═9725f362-2398-11eb-2c68-994a991385ff
+# ╠═9ba253c0-2398-11eb-367b-b93d59a4fa4d
