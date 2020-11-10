@@ -41,7 +41,7 @@ registries = map(registry_paths) do r
 end
 
 # ╔═╡ 4f502502-238f-11eb-010e-2bd4f4ad54ac
-Pkg.Types.stdlibs()
+# Pkg.Types.stdlibs()
 
 # ╔═╡ 57e25bc0-238f-11eb-3ca4-9900e4c37722
 ctx = Pkg.Types.Context()
