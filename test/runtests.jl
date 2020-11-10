@@ -8,7 +8,7 @@ using InteractiveUtils
 using Test
 
 # ╔═╡ d0b0df40-238f-11eb-34b4-0f3ed25ed387
-input = "Stati"
+input = "DiffEq"
 
 # ╔═╡ 98cd6600-2391-11eb-27ce-db2d65320b83
 function registries_path(registries, package_name)
@@ -103,7 +103,7 @@ suggestions2 = packagecompletions(input2)
 @test suggestions2[1] == "Dates"
 
 # ╔═╡ 02a99a10-2399-11eb-2040-131ed61481ae
-@test length(suggestions2) > 20
+@test length(suggestions2) > 10
 
 # ╔═╡ Cell order:
 # ╠═d0b0df40-238f-11eb-34b4-0f3ed25ed387
