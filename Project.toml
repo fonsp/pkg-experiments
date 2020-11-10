@@ -1,2 +1,4 @@
+name="PkgExperiments"
+uuid="aab0ff70-237e-11eb-0d02-a5ff5c3ee754"
 [deps]
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
