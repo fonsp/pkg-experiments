@@ -217,8 +217,123 @@ end
 # ╔═╡ 8c283b3e-28c4-11eb-171f-9d4b01bb6082
 
 
+# ╔═╡ e6a6d290-28e0-11eb-04c4-8d6fae877837
+md"""
+# Serializing the Pkg state
+"""
+
+# ╔═╡ ebaef830-28e0-11eb-3051-4143c9b2b0a7
+project = [
+	(name="a", rev="safdf", version=v"1.2.3"),
+	(name="c", version=v"1.2.3"),
+	(name="b", path="/a/b/c"),
+	]
+
+# ╔═╡ 47a0912e-28e1-11eb-0fdf-59e89fa0f627
+serialize_project(project::Vector{<:NamedTuple}) = sprint(serialize_project, project)
+
+# ╔═╡ 731f7cb2-28e4-11eb-1854-612a0f69825f
+
+
+# ╔═╡ 01edc8e0-28e3-11eb-1d8e-9322c2e0807f
+safe_pkg_vect(::Any) = false
+
+# ╔═╡ 0c9bb3b0-28e3-11eb-07aa-8753d31b0c4a
+function safe_pkg_entry_field_value(e::Expr)
+	e.head == :macrocall && length(e.args) == 3 && (
+		e.args[1] == Symbol("@v_str") &&
+		e.args[2] isa LineNumberNode &&
+		e.args[3] isa String
+		)
+end
+
+# ╔═╡ 766bde00-28e3-11eb-2391-59ea053b1434
+safe_pkg_entry_field_value(::String) = true
+
+# ╔═╡ 1488d0d0-28e3-11eb-3871-518d213c2686
+safe_pkg_entry_field_value(::Any) = false
+
+# ╔═╡ bb0eee8e-28e2-11eb-16dd-85d891b873fe
+function safe_pkg_vect(e::Expr)
+	e.head == :vect &&
+	all(e.args) do a
+		a isa Expr && a.head == :tuple && all(a.args) do f
+			f isa Expr && f.head == :(=) && length(f.args) == 2 && (
+					f.args[1] isa Symbol &&
+					safe_pkg_entry_field_value(f.args[2])
+				)
+		end
+	end
+end
+
+# ╔═╡ 30197720-28e1-11eb-37dd-3362c847d757
+function deserialize_project(str::String, start::Integer)::Vector{<:NamedTuple}
+	expr = Meta.parse(str, start; raise=false)[1]
+	@assert safe_pkg_vect(expr.args[2])
+	Core.eval(Main, expr.args[2])
+end
+
+# ╔═╡ 75d25290-28e2-11eb-3d80-158fc7b4a449
+Dump(x) = sprint() do io
+	dump(io, x; maxdepth=99999)
+end |> Text
+
+# ╔═╡ c95fb7c0-28e4-11eb-1b4b-8f91caacf14b
+variable_name = "PLUTO_NOTEBOOK_PACKAGES"
+
+# ╔═╡ 10e35a60-28e1-11eb-10d7-7bd2db5bc866
+function serialize_project(io::IO, project::Vector{<:NamedTuple})
+	write(io, variable_name, " = [\n")
+	for p in project
+		print(io, "\t", p, ",\n")
+	end
+	write(io, "]\n")
+end
+
+# ╔═╡ 4588d4c0-28e1-11eb-2ee8-870608ba8cec
+serialize_project(project) |> Text
+
+# ╔═╡ 95388000-28e2-11eb-3f73-bd7700b87946
+e = deserialize_project(serialize_project(project), 1)
+
+# ╔═╡ 9a2ea440-28e2-11eb-0a59-fd11997c6206
+safe_pkg_vect(e)
+
+# ╔═╡ f9a07fd0-28e1-11eb-1839-75520ad7d3f4
+test_header = """
+# Blasjflkjas
+#asfdsf 
+
+
+
+asdfasd
+f
+
+sfd
+
+$(serialize_project(project))
+
+asdf
+
+firs
+sdfff
+
+"""
+
 # ╔═╡ 6b92194e-28c4-11eb-3775-ebcc7d10b249
-# PlutoRunner.cell_results
+function deserialize_project_auto(str::String)::Vector{<:NamedTuple}
+	i = findfirst(variable_name, str)
+	deserialize_project(str, first(i))
+end
+
+# ╔═╡ 72bf6d40-28e2-11eb-3a13-c334b81603f9
+deserialize_project_auto(serialize_project(project)) |> Dump
+
+# ╔═╡ ee721a5e-28e1-11eb-232c-4303c5f9b01d
+@test deserialize_project_auto(serialize_project(project)) == project
+
+# ╔═╡ 0d26cac0-28e5-11eb-1bb8-052af64ffb80
+@test deserialize_project_auto(test_header) == project
 
 # ╔═╡ Cell order:
 # ╠═52305f60-2380-11eb-0a3b-6f693199061f
@@ -266,4 +381,24 @@ end
 # ╠═70c71b50-28c4-11eb-243d-e7fbf26c9d04
 # ╠═76a2aaa0-28d1-11eb-111a-652bb440adc2
 # ╠═8c283b3e-28c4-11eb-171f-9d4b01bb6082
+# ╟─e6a6d290-28e0-11eb-04c4-8d6fae877837
+# ╠═ebaef830-28e0-11eb-3051-4143c9b2b0a7
+# ╠═10e35a60-28e1-11eb-10d7-7bd2db5bc866
+# ╠═47a0912e-28e1-11eb-0fdf-59e89fa0f627
+# ╠═30197720-28e1-11eb-37dd-3362c847d757
+# ╠═731f7cb2-28e4-11eb-1854-612a0f69825f
+# ╠═4588d4c0-28e1-11eb-2ee8-870608ba8cec
+# ╠═95388000-28e2-11eb-3f73-bd7700b87946
+# ╠═9a2ea440-28e2-11eb-0a59-fd11997c6206
+# ╠═bb0eee8e-28e2-11eb-16dd-85d891b873fe
+# ╠═01edc8e0-28e3-11eb-1d8e-9322c2e0807f
+# ╠═0c9bb3b0-28e3-11eb-07aa-8753d31b0c4a
+# ╠═766bde00-28e3-11eb-2391-59ea053b1434
+# ╠═1488d0d0-28e3-11eb-3871-518d213c2686
+# ╠═72bf6d40-28e2-11eb-3a13-c334b81603f9
+# ╠═ee721a5e-28e1-11eb-232c-4303c5f9b01d
+# ╠═75d25290-28e2-11eb-3d80-158fc7b4a449
+# ╠═c95fb7c0-28e4-11eb-1b4b-8f91caacf14b
+# ╠═f9a07fd0-28e1-11eb-1839-75520ad7d3f4
 # ╠═6b92194e-28c4-11eb-3775-ebcc7d10b249
+# ╠═0d26cac0-28e5-11eb-1bb8-052af64ffb80
