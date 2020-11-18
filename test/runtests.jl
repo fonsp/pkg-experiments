@@ -283,15 +283,22 @@ variable_name = "PLUTO_NOTEBOOK_PACKAGES"
 
 # ╔═╡ 10e35a60-28e1-11eb-10d7-7bd2db5bc866
 function serialize_project(io::IO, project::Vector{<:NamedTuple})
-	write(io, variable_name, " = [\n")
-	for p in project
-		print(io, "\t", p, ",\n")
+	if isempty(project)
+		write(io, variable_name, " = []")
+	else
+		write(io, variable_name, " = [\n")
+		for p in project
+			print(io, "\t", p, ",\n")
+		end
+		write(io, "]\n")
 	end
-	write(io, "]\n")
 end
 
 # ╔═╡ 4588d4c0-28e1-11eb-2ee8-870608ba8cec
 serialize_project(project) |> Text
+
+# ╔═╡ 9cad6310-28e6-11eb-2494-53c3b8056ad2
+serialize_project(NamedTuple[]) |> Text
 
 # ╔═╡ 95388000-28e2-11eb-3f73-bd7700b87946
 e = deserialize_project(serialize_project(project), 1)
@@ -388,6 +395,7 @@ deserialize_project_auto(serialize_project(project)) |> Dump
 # ╠═30197720-28e1-11eb-37dd-3362c847d757
 # ╠═731f7cb2-28e4-11eb-1854-612a0f69825f
 # ╠═4588d4c0-28e1-11eb-2ee8-870608ba8cec
+# ╠═9cad6310-28e6-11eb-2494-53c3b8056ad2
 # ╠═95388000-28e2-11eb-3f73-bd7700b87946
 # ╠═9a2ea440-28e2-11eb-0a59-fd11997c6206
 # ╠═bb0eee8e-28e2-11eb-16dd-85d891b873fe
