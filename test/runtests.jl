@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.12.10
+# v0.12.17
 
 using Markdown
 using InteractiveUtils
@@ -12,6 +12,9 @@ using UUIDs
 
 # ╔═╡ 6a921012-2382-11eb-1e80-7fa5613b33fe
 import Pkg
+
+# ╔═╡ f2e4721a-3ccc-11eb-2ad0-21fd855113e7
+
 
 # ╔═╡ 58ebcf22-28b6-11eb-1bf5-a3a07ba19de6
 md"""
@@ -34,7 +37,7 @@ end
 suggestions = isempty(input) ? [] : registered_packagecompletions(input)
 
 # ╔═╡ 66d54340-238f-11eb-3648-276b79333215
-choice = "Pluto"
+choice = "Revise"
 
 # ╔═╡ d5d5b4a0-238f-11eb-3abf-2d2e30b9db08
 @test length(suggestions) > 10
@@ -54,6 +57,57 @@ end
 md"""
 # Versions
 """
+
+# ╔═╡ c4eed44e-3cc8-11eb-316b-97884e463718
+md"""
+## Recommended version ranges
+"""
+
+# ╔═╡ d4346da4-3cca-11eb-15a8-f9e2b48b5708
+Pkg.Types.VersionRange("3-9.0")
+
+# ╔═╡ e43b4808-3cca-11eb-3cf3-972d7d175fd4
+
+
+# ╔═╡ af0e4e4c-3cc9-11eb-2fdf-c983863e718f
+import Pkg.Types: VersionRange, VersionBound
+
+# ╔═╡ 5e5e6e3c-3cc9-11eb-1527-a38c8ba1b5a9
+v"4.5.6" ∈ VersionRange(VersionBound(v"1.2.3"),VersionBound((v"4.5.6",1)))
+
+# ╔═╡ a56422e4-3cca-11eb-0da6-951da09b1464
+methods(VersionBound)
+
+# ╔═╡ 729f84e8-3cca-11eb-1126-a116ff515c20
+v"0.1.1" ∈ VersionRange(v"0.1")
+
+# ╔═╡ 2cdf88fa-3cc9-11eb-2c67-9582b4a9f20d
+function recommended_ranges(available::AbstractVector{VersionNumber})
+	unique(
+		if v.major == 0
+			VersionRange("0.$(v.minor)")
+		else
+			VersionRange("$(v.major)")
+		end
+	for v in available) |> reverse!
+end
+
+# ╔═╡ 6d4d550a-3ccb-11eb-3374-b99b070a870c
+@test recommended_ranges([
+		v"0.2.0", v"0.2.1", v"1.0.3", v"1.1.0", v"1.1.1", v"2.0.0", v"2.0.7", v"2.1.0", v"3.1.9"
+		]) == [
+	VersionRange("3"), VersionRange("2"), VersionRange("1"), VersionRange("0.2")
+]
+
+
+# ╔═╡ a5e73ffc-3ccb-11eb-1d27-df73a6704352
+
+
+# ╔═╡ 578dce4c-3cca-11eb-2472-e1a3770a555d
+v = v"1.2.3"
+
+# ╔═╡ 5afe7290-3cca-11eb-1098-1d6d2f289d63
+v.major == 1
 
 # ╔═╡ 9e3d2ba2-28b6-11eb-3056-dff56f475a9f
 md"""
@@ -107,6 +161,12 @@ choice_versions = package_versions_from_path(choice_fullpath)
 
 # ╔═╡ 744e54a0-2392-11eb-1bcb-b122f423aa21
 @test length(choice_versions) > 25
+
+# ╔═╡ f6d961e4-3cc9-11eb-008f-2fb676ec514b
+recommended_ranges(choice_versions)
+
+# ╔═╡ e2100f0e-3ccb-11eb-1b04-ed78ad5b2648
+string(choice_versions) |> Text
 
 # ╔═╡ 8db62de0-2398-11eb-1010-354285451686
 md"""
@@ -206,7 +266,9 @@ function is_downloaded(pkg_name, version::VersionNumber)
 end
 
 # ╔═╡ 2e5b3fa2-28d1-11eb-3fab-ad91df79562e
-
+md"""
+This next test might fail if you're running the notebook, it's meant more for the CI which initializes the environment from the Manifest.toml in this repo
+"""
 
 # ╔═╡ 70c71b50-28c4-11eb-243d-e7fbf26c9d04
 @test is_downloaded("PlutoUI", v"0.6.5")
@@ -278,6 +340,12 @@ Dump(x) = sprint() do io
 	dump(io, x; maxdepth=99999)
 end |> Text
 
+# ╔═╡ 341ed4a2-3cc9-11eb-3e61-63bdc8348bc7
+Pkg.Types.VersionRange("3-9") |> Dump
+
+# ╔═╡ c37cbf52-3cca-11eb-0145-db6151f8d7b7
+Pkg.Types.VersionRange("3-9.0") |> Dump
+
 # ╔═╡ c95fb7c0-28e4-11eb-1b4b-8f91caacf14b
 variable_name = "PLUTO_NOTEBOOK_PACKAGES"
 
@@ -345,6 +413,7 @@ deserialize_project_auto(serialize_project(project)) |> Dump
 # ╔═╡ Cell order:
 # ╠═52305f60-2380-11eb-0a3b-6f693199061f
 # ╠═6a921012-2382-11eb-1e80-7fa5613b33fe
+# ╠═f2e4721a-3ccc-11eb-2ad0-21fd855113e7
 # ╟─58ebcf22-28b6-11eb-1bf5-a3a07ba19de6
 # ╠═d0b0df40-238f-11eb-34b4-0f3ed25ed387
 # ╠═7b5add20-238f-11eb-1217-453e2d37d344
@@ -359,6 +428,22 @@ deserialize_project_auto(serialize_project(project)) |> Dump
 # ╠═879a388e-28cd-11eb-306e-57a3d69cf96e
 # ╠═686e59d0-238f-11eb-3f12-bf477e76da93
 # ╠═744e54a0-2392-11eb-1bcb-b122f423aa21
+# ╟─c4eed44e-3cc8-11eb-316b-97884e463718
+# ╠═341ed4a2-3cc9-11eb-3e61-63bdc8348bc7
+# ╠═c37cbf52-3cca-11eb-0145-db6151f8d7b7
+# ╠═d4346da4-3cca-11eb-15a8-f9e2b48b5708
+# ╠═5e5e6e3c-3cc9-11eb-1527-a38c8ba1b5a9
+# ╠═a56422e4-3cca-11eb-0da6-951da09b1464
+# ╠═e43b4808-3cca-11eb-3cf3-972d7d175fd4
+# ╠═729f84e8-3cca-11eb-1126-a116ff515c20
+# ╠═af0e4e4c-3cc9-11eb-2fdf-c983863e718f
+# ╠═2cdf88fa-3cc9-11eb-2c67-9582b4a9f20d
+# ╠═f6d961e4-3cc9-11eb-008f-2fb676ec514b
+# ╠═e2100f0e-3ccb-11eb-1b04-ed78ad5b2648
+# ╠═6d4d550a-3ccb-11eb-3374-b99b070a870c
+# ╠═a5e73ffc-3ccb-11eb-1d27-df73a6704352
+# ╠═578dce4c-3cca-11eb-2472-e1a3770a555d
+# ╠═5afe7290-3cca-11eb-1098-1d6d2f289d63
 # ╟─9e3d2ba2-28b6-11eb-3056-dff56f475a9f
 # ╠═fe905760-238f-11eb-1cc0-ebb3852a20de
 # ╠═9f6753c2-28b6-11eb-0b73-7fdf2a02952d
@@ -384,7 +469,7 @@ deserialize_project_auto(serialize_project(project)) |> Dump
 # ╠═dbb0b5d2-28cd-11eb-2e78-279dca23052e
 # ╠═fbfaac30-28d0-11eb-2e70-2f6e33f6f0c3
 # ╠═ca107380-28cb-11eb-146b-67cb40cfcfa2
-# ╠═2e5b3fa2-28d1-11eb-3fab-ad91df79562e
+# ╟─2e5b3fa2-28d1-11eb-3fab-ad91df79562e
 # ╠═70c71b50-28c4-11eb-243d-e7fbf26c9d04
 # ╠═76a2aaa0-28d1-11eb-111a-652bb440adc2
 # ╠═8c283b3e-28c4-11eb-171f-9d4b01bb6082
