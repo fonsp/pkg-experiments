@@ -72,9 +72,6 @@ Pkg.Types.VersionRange("3-9.0")
 # ╔═╡ af0e4e4c-3cc9-11eb-2fdf-c983863e718f
 import Pkg.Types: VersionRange, VersionBound
 
-# ╔═╡ 5e5e6e3c-3cc9-11eb-1527-a38c8ba1b5a9
-v"4.5.6" ∈ VersionRange(VersionBound(v"1.2.3"),VersionBound((v"4.5.6",1)))
-
 # ╔═╡ a56422e4-3cca-11eb-0da6-951da09b1464
 methods(VersionBound)
 
@@ -432,7 +429,6 @@ deserialize_project_auto(serialize_project(project)) |> Dump
 # ╠═341ed4a2-3cc9-11eb-3e61-63bdc8348bc7
 # ╠═c37cbf52-3cca-11eb-0145-db6151f8d7b7
 # ╠═d4346da4-3cca-11eb-15a8-f9e2b48b5708
-# ╠═5e5e6e3c-3cc9-11eb-1527-a38c8ba1b5a9
 # ╠═a56422e4-3cca-11eb-0da6-951da09b1464
 # ╠═e43b4808-3cca-11eb-3cf3-972d7d175fd4
 # ╠═729f84e8-3cca-11eb-1126-a116ff515c20
